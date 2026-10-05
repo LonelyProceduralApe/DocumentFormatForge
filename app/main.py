@@ -38,7 +38,7 @@ from PySide6.QtWidgets import (
 
 from docx import Document
 
-from . import classifier, font_check, formatter, rules_config, template_apply, wps_launch
+from . import classifier, converter, font_check, formatter, rules_config, template_apply, wps_launch
 from .docx_io import read_paragraphs
 
 
@@ -107,7 +107,7 @@ class MainWindow(QMainWindow):
         # 右侧：段落清单
         right = QWidget()
         right_layout = QVBoxLayout(right)
-        self.cur_label = QLabel("请先添加并选中一个 .docx 文件")
+        self.cur_label = QLabel("请先添加并选中一个 .docx/.doc/.wps 文件")
         right_layout.addWidget(self.cur_label)
         self.table = QTableWidget(0, 4)
         self.table.setHorizontalHeaderLabels(["序号", "段落内容", "角色", "将套用格式"])
@@ -170,7 +170,7 @@ class MainWindow(QMainWindow):
 
     # ---------- 文件列表 ----------
     def add_files(self):
-        paths, _ = QFileDialog.getOpenFileNames(self, "选择 docx 文件", "", "Word 文档 (*.docx)")
+        paths, _ = QFileDialog.getOpenFileNames(self, "选择 docx 文件", "", "文档文件 (*.docx *.doc *.wps)")
         for p in paths:
             if p:
                 fp = Path(p)
@@ -204,6 +204,8 @@ class MainWindow(QMainWindow):
             return
         path = Path(item.text())
         try:
+            if converter.is_convertible(path):
+                path = converter.convert_to_docx(path)
             doc = Document(str(path))
         except Exception as exc:  # noqa: BLE001
             QMessageBox.warning(self, "打开失败", f"{path.name}\n{exc}")

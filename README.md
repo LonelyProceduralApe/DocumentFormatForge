@@ -81,6 +81,7 @@ python launcher.py
 app/
   main.py            # PySide6 主界面
   classifier.py      # 结构识别分类器
+  converter.py       # 文档格式转换器
   formatter.py       # 格式应用引擎（页面/段落/页码）
   rules_config.py    # 规则加载/保存
   rules.json         # 规则配置（可编辑）
